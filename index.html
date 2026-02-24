@@ -998,10 +998,12 @@
 
 <!-- ── SHARE MODAL ── -->
 <div id="share-modal" style="
-  position:fixed; inset:0; z-index:1000;
+  position:fixed; top:0; left:0; right:0; bottom:0; z-index:1000;
   background:rgba(0,0,0,0.75);
-  display:none; align-items:flex-end; justify-content:center;
+  display:none;
+  align-items:flex-end; justify-content:center;
   backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
 " onclick="if(event.target===this) closeShareModal()">
   <div style="
     background:#161616;
@@ -1143,8 +1145,12 @@
 
   function openShareModal() {
     const modal = document.getElementById('share-modal');
+    const inner = document.getElementById('share-modal-inner');
+    inner.style.transform = 'translateY(100%)';
     modal.style.display = 'flex';
-    setTimeout(() => { document.getElementById('share-modal-inner').style.transform = 'translateY(0)'; }, 10);
+    // Force reflow avant animation
+    modal.offsetHeight;
+    setTimeout(() => { inner.style.transform = 'translateY(0)'; }, 20);
   }
 
   function closeShareModal() {
