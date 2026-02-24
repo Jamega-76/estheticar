@@ -975,19 +975,50 @@
   }
 
   // ── Share ──
+  const SHARE_URL = 'https://jamega.github.io/estheticar/';
+
   function shareApp() {
-    const data = {
-      title: 'ESTHETICAR',
-      text: 'Faites votre demande de carte grise en ligne facilement.',
-      url: window.location.href
-    };
     if (navigator.share) {
-      navigator.share(data).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        showToast('Lien copié dans le presse-papier ✓');
+      navigator.share({
+        title: 'ESTHETICAR — Carte Grise',
+        text: 'Faites votre demande de carte grise en ligne facilement.',
+        url: SHARE_URL
+      })
+      .then(() => showToast('Merci pour le partage ! ✓'))
+      .catch(err => {
+        // L'utilisateur a annulé = AbortError, on ne montre rien
+        if (err.name !== 'AbortError') copyToClipboard();
       });
+    } else {
+      copyToClipboard();
     }
+  }
+
+  function copyToClipboard() {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(SHARE_URL)
+        .then(() => showToast('Lien copié dans le presse-papier ✓'))
+        .catch(() => fallbackCopy());
+    } else {
+      fallbackCopy();
+    }
+  }
+
+  function fallbackCopy() {
+    // Méthode universelle via input temporaire
+    const input = document.createElement('input');
+    input.value = SHARE_URL;
+    input.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    document.body.appendChild(input);
+    input.focus();
+    input.select();
+    try {
+      document.execCommand('copy');
+      showToast('Lien copié dans le presse-papier ✓');
+    } catch {
+      showToast('Lien : ' + SHARE_URL);
+    }
+    document.body.removeChild(input);
   }
 
   // ── Toast ──
