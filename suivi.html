@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Suivi de demande — ESTHETICAR</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #161616;
+      --surface2: #1c1c1c;
+      --border: rgba(255,255,255,0.12);
+      --border-hover: rgba(255,255,255,0.28);
+      --border-focus: rgba(255,255,255,0.6);
+      --text: #f0f0f0;
+      --text-muted: rgba(255,255,255,0.45);
+      --accent: #c8c8c8;
+      --accent-bright: #ffffff;
+      --success: #4ade80;
+      --pending: #facc15;
+      --error: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: 'Raleway', sans-serif; }
+    #app { max-width: 480px; margin: 0 auto; padding: 0 24px 64px; }
+
+    /* ── HEADER ── */
+    .header { display: flex; align-items: center; padding: 52px 0 28px; }
+    .back-btn {
+      width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 50%;
+      background: transparent; color: var(--text); display: flex; align-items: center;
+      justify-content: center; font-size: 20px; text-decoration: none; flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+    .back-btn:hover { border-color: var(--border-hover); }
+    .page-title { font-family: 'Montserrat', sans-serif; font-size: 19px; font-weight: 600; letter-spacing: 1px; flex: 1; text-align: center; }
+    .spacer { width: 40px; }
+
+    /* ── INTRO ── */
+    .intro-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px; margin-bottom: 28px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .intro-box .info-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .intro-box p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .intro-box strong { color: var(--text); }
+
+    /* ── FORM ── */
+    .section-label {
+      font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 2.5px; color: var(--text-muted); text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+    .form-label {
+      display: block; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;
+      margin-bottom: 8px; margin-top: 18px;
+    }
+    .required { color: var(--error); margin-left: 2px; }
+    .form-input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text); font-family: 'Raleway', sans-serif;
+      font-size: 15px; padding: 14px 16px; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none;
+    }
+    .form-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(255,255,255,0.04); }
+    .form-input.error { border-color: var(--error); }
+    .form-input::placeholder { color: rgba(255,255,255,0.18); }
+    .field-error { font-size: 11px; color: var(--error); margin-top: 6px; display: none; }
+    .field-error.visible { display: block; }
+
+    /* ── ATTEMPTS WARNING ── */
+    .attempts-bar {
+      display: flex; gap: 5px; margin-top: 12px;
+    }
+    .attempt-dot {
+      height: 3px; flex: 1; border-radius: 2px;
+      background: var(--border); transition: background 0.3s;
+    }
+    .attempt-dot.used { background: var(--error); }
+    .attempts-label { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+    /* ── BOUTON ── */
+    .btn-primary {
+      width: 100%; padding: 18px; background: var(--accent-bright); color: #000;
+      border: none; border-radius: 14px; font-family: 'Montserrat', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 2px; cursor: pointer;
+      margin-top: 24px; transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:active { transform: scale(0.99); }
+    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    /* ── RÉSULTAT ── */
+    #result-wrapper {
+      display: none; margin-top: 32px;
+      animation: fadeUp 0.4s ease;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+    .result-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px; margin-bottom: 20px;
+    }
+    .result-card h3 {
+      font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; color: var(--text-muted); margin-bottom: 12px;
+    }
+    .result-field { margin-bottom: 10px; }
+    .result-field:last-child { margin-bottom: 0; }
+    .result-key { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+    .result-val { font-size: 14px; font-weight: 500; }
+
+    /* Badge statut */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 20px; font-family: 'Montserrat', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    }
+    .badge-progress { background: rgba(250,204,21,0.1); color: var(--pending); border: 1px solid rgba(250,204,21,0.25); }
+    .badge-done { background: rgba(74,222,128,0.1); color: var(--success); border: 1px solid rgba(74,222,128,0.25); }
+    .badge-review { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .badge-dot.pulse { animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    /* Timeline */
+    .timeline { margin-top: 4px; }
+    .tl-item { display: flex; gap: 14px; padding-bottom: 20px; position: relative; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; }
+    .tl-dot {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      border: 1px solid var(--border); background: var(--bg);
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+    }
+    .tl-dot.done { background: rgba(74,222,128,0.08); border-color: var(--success); color: var(--success); }
+    .tl-dot.current { background: rgba(250,204,21,0.08); border-color: var(--pending); color: var(--pending); }
+    .tl-dot.waiting { color: var(--text-muted); }
+    .tl-line { flex: 1; width: 1px; background: var(--border); margin-top: 6px; }
+    .tl-content { padding-top: 4px; }
+    .tl-content strong { font-size: 13px; font-weight: 600; display: block; margin-bottom: 3px; }
+    .tl-content span { font-size: 12px; color: var(--text-muted); }
+    .tl-date { font-size: 11px; color: var(--text-muted); margin-top: 2px; display: block; }
+
+    /* Sécurité note */
+    .security-note {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px; margin-top: 20px;
+    }
+    .security-note span { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+    /* Bloqué */
+    #blocked-msg {
+      display: none; text-align: center; padding: 32px 0;
+      animation: fadeUp 0.3s ease;
+    }
+    .blocked-icon { font-size: 40px; margin-bottom: 16px; }
+    .blocked-title { font-family:'Montserrat',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; margin-bottom:10px; }
+    .blocked-sub { font-size:13px; color:var(--text-muted); line-height:1.7; max-width:280px; margin:0 auto 24px; }
+    .btn-outline {
+      display: inline-block; padding: 14px 28px; border: 1px solid var(--border);
+      border-radius: 12px; font-family:'Montserrat',sans-serif; font-size:12px; font-weight:600;
+      letter-spacing:1.5px; color:var(--text); text-decoration:none; transition:border-color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--border-hover); }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 22px; font-size: 13px; opacity: 0; pointer-events: none;
+      transition: all 0.3s; white-space: nowrap; z-index: 999;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.err { border-color: var(--error); color: var(--error); }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <div class="header">
+    <a href="index.html" class="back-btn">‹</a>
+    <div class="page-title">SUIVI DEMANDE</div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══ FORMULAIRE DE RECHERCHE ══ -->
+  <div id="search-wrapper">
+
+    <div class="intro-box">
+      <span class="info-icon">ℹ️</span>
+      <p>Saisissez votre <strong>nom</strong> et votre <strong>numéro de dossier</strong> (format <strong>EST-2024-XXXX</strong>) reçus par email lors de votre demande.</p>
+    </div>
+
+    <div class="section-label">Identifiants de votre dossier</div>
+
+    <label class="form-label">VOTRE NOM <span class="required">*</span></label>
+    <input class="form-input" id="track-nom" type="text" placeholder="DUPONT"
+      maxlength="60" autocomplete="off" spellcheck="false"
+      oninput="this.value = this.value.toUpperCase()" />
+    <div class="field-error" id="err-nom">Veuillez saisir votre nom</div>
+
+    <label class="form-label">NUMÉRO DE DOSSIER <span class="required">*</span></label>
+    <input class="form-input" id="track-ref" type="text" placeholder="EST-2024-XXXX"
+      maxlength="16" autocomplete="off" spellcheck="false"
+      oninput="formatRef(this)" />
+    <div class="field-error" id="err-ref">Format invalide (ex : EST-2024-1234)</div>
+
+    <!-- Barre de tentatives -->
+    <div class="attempts-bar" id="attempts-bar">
+      <div class="attempt-dot" id="att-1"></div>
+      <div class="attempt-dot" id="att-2"></div>
+      <div class="attempt-dot" id="att-3"></div>
+      <div class="attempt-dot" id="att-4"></div>
+      <div class="attempt-dot" id="att-5"></div>
+    </div>
+    <div class="attempts-label" id="attempts-label">5 tentatives disponibles</div>
+
+    <div class="security-note">
+      <span>🔒</span>
+      <span>La recherche est limitée à 5 tentatives par session pour protéger la confidentialité des dossiers.</span>
+    </div>
+
+    <button class="btn-primary" id="search-btn" onclick="searchDossier()">RECHERCHER MON DOSSIER</button>
+  </div>
+
+  <!-- ══ BLOQUÉ ══ -->
+  <div id="blocked-msg">
+    <div class="blocked-icon">🔒</div>
+    <div class="blocked-title">ACCÈS TEMPORAIREMENT BLOQUÉ</div>
+    <div class="blocked-sub">Trop de tentatives incorrectes. Pour accéder à votre dossier, contactez notre équipe directement.</div>
+    <a href="contact.html" class="btn-outline">CONTACTER L'ÉQUIPE</a>
+  </div>
+
+  <!-- ══ RÉSULTAT ══ -->
+  <div id="result-wrapper">
+
+    <div class="result-card">
+      <h3>INFORMATIONS DU DOSSIER</h3>
+      <div class="result-field">
+        <div class="result-key">Référence</div>
+        <div class="result-val" id="res-ref">—</div>
+      </div>
+      <div class="result-field">
+        <div class="result-key">Titulaire</div>
+        <div class="result-val" id="res-nom">—</div>
+      </div>
+      <div class="result-field">
+        <div class="result-key">Type de demande</div>
+        <div class="result-val" id="res-type">—</div>
+      </div>
+      <div class="result-field">
+        <div class="result-key">Véhicule</div>
+        <div class="result-val" id="res-vehicle">—</div>
+      </div>
+      <div class="result-field">
+        <div class="result-key">Statut</div>
+        <div id="res-badge">—</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3>PROGRESSION</h3>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <div class="security-note">
+      <span>🔒</span>
+      <span>Ces informations sont confidentielles et accessibles uniquement par le titulaire du dossier.</span>
+    </div>
+
+    <button class="btn-primary" style="background:transparent; color:var(--text-muted); border:1px solid var(--border); margin-top:16px;"
+      onclick="resetSearch()">← NOUVELLE RECHERCHE</button>
+  </div>
+
+</div>
+<div id="toast"></div>
+
+<script>
+  // ── Sécurité : rate limiting côté client ──
+  const MAX_ATTEMPTS = 5;
+  let attempts = 0;
+  let isLocked = false;
+
+  // ── Format du numéro de dossier ──
+  function formatRef(input) {
+    let v = input.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+    // Auto-insère les tirets : EST-2024-1234
+    v = v.replace(/-/g, '');
+    if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3);
+    if (v.length > 8) v = v.slice(0,8) + '-' + v.slice(8,12);
+    input.value = v.slice(0, 13);
+  }
+
+  // ── Validation ──
+  function isValidRef(ref) {
+    return /^EST-\d{4}-\d{4}$/.test(ref);
+  }
+
+  // ── Mise à jour des tentatives ──
+  function updateAttempts() {
+    const label = document.getElementById('attempts-label');
+    for (let i = 1; i <= 5; i++) {
+      const dot = document.getElementById('att-' + i);
+      dot.className = 'attempt-dot' + (i <= attempts ? ' used' : '');
+    }
+    const remaining = MAX_ATTEMPTS - attempts;
+    label.textContent = remaining > 0
+      ? remaining + ' tentative' + (remaining > 1 ? 's' : '') + ' restante' + (remaining > 1 ? 's' : '')
+      : 'Aucune tentative restante';
+    label.style.color = remaining <= 2 ? 'var(--error)' : 'var(--text-muted)';
+  }
+
+  // ── Simulation de base de données ──
+  // En production, remplacer par un appel API sécurisé côté serveur
+  const DEMO_DOSSIERS = {
+    'EST-2024-1234': {
+      nom: 'DUPONT',
+      type: 'Changement de propriétaire',
+      vehicle: 'Renault Clio — AB-456-CD',
+      status: 'progress', // done | progress | review
+      steps: [
+        { label: 'Dossier reçu', detail: 'Votre demande a été enregistrée', date: '18 fév. 2024', state: 'done' },
+        { label: 'Documents vérifiés', detail: 'Pièces justificatives validées', date: '19 fév. 2024', state: 'done' },
+        { label: 'En traitement ANTS', detail: 'Soumis auprès de l\'administration', date: '20 fév. 2024', state: 'current' },
+        { label: 'Carte grise éditée', detail: 'En attente', date: '', state: 'waiting' },
+        { label: 'Expédiée à domicile', detail: 'En attente', date: '', state: 'waiting' },
+      ]
+    },
+    'EST-2024-5678': {
+      nom: 'MARTIN',
+      type: 'Duplicata',
+      vehicle: 'Peugeot 308 — CD-789-EF',
+      status: 'done',
+      steps: [
+        { label: 'Dossier reçu', detail: 'Votre demande a été enregistrée', date: '10 fév. 2024', state: 'done' },
+        { label: 'Documents vérifiés', detail: 'Pièces justificatives validées', date: '11 fév. 2024', state: 'done' },
+        { label: 'Traitement ANTS', detail: 'Dossier accepté', date: '13 fév. 2024', state: 'done' },
+        { label: 'Carte grise éditée', detail: 'Imprimée et prête', date: '15 fév. 2024', state: 'done' },
+        { label: 'Expédiée à domicile', detail: 'Envoi Chronopost', date: '16 fév. 2024', state: 'done' },
+      ]
+    }
+  };
+
+  // ── Recherche ──
+  function searchDossier() {
+    if (isLocked) return;
+
+    const nom = document.getElementById('track-nom').value.trim().toUpperCase();
+    const ref = document.getElementById('track-ref').value.trim().toUpperCase();
+    let valid = true;
+
+    // Validation
+    if (!nom || nom.length < 2) {
+      document.getElementById('err-nom').classList.add('visible');
+      document.getElementById('track-nom').classList.add('error');
+      valid = false;
+    } else {
+      document.getElementById('err-nom').classList.remove('visible');
+      document.getElementById('track-nom').classList.remove('error');
+    }
+
+    if (!isValidRef(ref)) {
+      document.getElementById('err-ref').classList.add('visible');
+      document.getElementById('track-ref').classList.add('error');
+      valid = false;
+    } else {
+      document.getElementById('err-ref').classList.remove('visible');
+      document.getElementById('track-ref').classList.remove('error');
+    }
+
+    if (!valid) return;
+
+    // Simulation recherche
+    const btn = document.getElementById('search-btn');
+    btn.textContent = 'RECHERCHE EN COURS...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      btn.textContent = 'RECHERCHER MON DOSSIER';
+      btn.disabled = false;
+
+      const dossier = DEMO_DOSSIERS[ref];
+
+      // Vérifie que le nom correspond (sécurité : double vérification)
+      if (!dossier || dossier.nom !== nom) {
+        attempts++;
+        updateAttempts();
+
+        if (attempts >= MAX_ATTEMPTS) {
+          isLocked = true;
+          document.getElementById('search-wrapper').style.display = 'none';
+          document.getElementById('blocked-msg').style.display = 'block';
+          return;
+        }
+
+        const remaining = MAX_ATTEMPTS - attempts;
+        showToast('Dossier introuvable · ' + remaining + ' tentative(s) restante(s)', true);
+        return;
+      }
+
+      // Affichage du résultat
+      document.getElementById('res-ref').textContent = ref;
+      document.getElementById('res-nom').textContent = dossier.nom;
+      document.getElementById('res-type').textContent = dossier.type;
+      document.getElementById('res-vehicle').textContent = dossier.vehicle;
+
+      // Badge statut
+      const badges = {
+        progress: '<div class="status-badge badge-progress"><div class="badge-dot pulse"></div>EN COURS DE TRAITEMENT</div>',
+        done:     '<div class="status-badge badge-done"><div class="badge-dot"></div>EXPÉDIÉ ✓</div>',
+        review:   '<div class="status-badge badge-review"><div class="badge-dot"></div>EN COURS DE VÉRIFICATION</div>',
+      };
+      document.getElementById('res-badge').innerHTML = badges[dossier.status] || '—';
+
+      // Timeline
+      const tl = document.getElementById('timeline');
+      tl.innerHTML = '';
+      dossier.steps.forEach((step, i) => {
+        const isLast = i === dossier.steps.length - 1;
+        const dotClass = step.state === 'done' ? 'done' : step.state === 'current' ? 'current' : 'waiting';
+        const dotIcon  = step.state === 'done' ? '✓' : step.state === 'current' ? '⟳' : '';
+        tl.innerHTML += `
+          <div class="tl-item">
+            <div class="tl-left">
+              <div class="tl-dot ${dotClass}">${dotIcon}</div>
+              ${!isLast ? '<div class="tl-line"></div>' : ''}
+            </div>
+            <div class="tl-content">
+              <strong>${step.label}</strong>
+              <span>${step.detail}</span>
+              ${step.date ? `<span class="tl-date">${step.date}</span>` : ''}
+            </div>
+          </div>`;
+      });
+
+      document.getElementById('search-wrapper').style.display = 'none';
+      document.getElementById('result-wrapper').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    }, 1000);
+  }
+
+  // ── Nouvelle recherche ──
+  function resetSearch() {
+    document.getElementById('track-nom').value = '';
+    document.getElementById('track-ref').value = '';
+    document.getElementById('result-wrapper').style.display = 'none';
+    document.getElementById('search-wrapper').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Toast ──
+  function showToast(msg, isErr = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show' + (isErr ? ' err' : '');
+    setTimeout(() => { t.className = ''; }, 3000);
+  }
+
+  // ── Entrée clavier ──
+  document.getElementById('track-ref').addEventListener('keydown', e => {
+    if (e.key === 'Enter') searchDossier();
+  });
+</script>
+</body>
+</html>
