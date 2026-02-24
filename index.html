@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="ESTHETICAR" />
+  <title>ESTHETICAR</title>
+  <link rel="manifest" href="manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --surface: #161616;
+      --border: rgba(255,255,255,0.12);
+      --border-hover: rgba(255,255,255,0.28);
+      --text: #f0f0f0;
+      --text-muted: rgba(255,255,255,0.45);
+      --accent: #c8c8c8;
+      --accent-bright: #ffffff;
+      --success: #4ade80;
+      --error: #f87171;
+      --input-bg: #1c1c1c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── APP SHELL ── */
+    #app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── SCREENS ── */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 24px 32px;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(30px);
+      transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      scrollbar-width: none;
+    }
+    .screen::-webkit-scrollbar { display: none; }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateX(0);
+    }
+    .screen.exit {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 52px 0 0;
+      flex-shrink: 0;
+    }
+    .back-btn {
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .back-btn:hover { border-color: var(--border-hover); background: var(--surface); }
+
+    /* ── HOME SCREEN ── */
+    #screen-home .logo-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 64px;
+      padding-bottom: 56px;
+    }
+    .car-icon {
+      width: 120px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 20px rgba(255,255,255,0.08));
+      animation: floatCar 4s ease-in-out infinite;
+    }
+    @keyframes floatCar {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .brand-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: 6px;
+      color: var(--accent);
+    }
+
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+    .menu-btn {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 22px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+      width: 100%;
+    }
+    .menu-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .menu-btn:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+    .menu-btn:hover::before { opacity: 1; }
+    .menu-btn:active { transform: translateY(0) scale(0.99); }
+    .menu-icon {
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+    .menu-btn .arrow {
+      margin-left: auto;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .footer-copy {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      padding-top: 28px;
+      flex-shrink: 0;
+    }
+
+    /* ── PAGE TITLE ── */
+    .page-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      flex: 1;
+      text-align: center;
+    }
+    .spacer { width: 40px; }
+
+    /* ── SECTION HEADERS ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      margin-top: 24px;
+    }
+
+    /* ── FORM ── */
+    .form-group {
+      margin-bottom: 4px;
+    }
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-size: 15px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-input:focus, .form-select:focus { border-color: var(--accent); }
+    .form-select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath fill='none' stroke='%23888' stroke-width='1.5' d='M1 1l5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+    .form-select option { background: var(--bg2); }
+    .form-input::placeholder { color: rgba(255,255,255,0.2); }
+    textarea.form-input { resize: none; min-height: 90px; }
+
+    /* Type selector pills */
+    .type-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .pill-btn {
+      padding: 14px 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .pill-btn.selected {
+      border-color: var(--accent-bright);
+      color: var(--accent-bright);
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Step indicator */
+    .steps-bar {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      padding: 18px 0 0;
+    }
+    .step-dot {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border);
+      transition: all 0.3s;
+      flex: 1;
+    }
+    .step-dot.done { background: var(--accent); }
+    .step-dot.active { background: var(--accent-bright); }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent-bright);
+      color: #000;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      margin-top: 28px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:active { transform: scale(0.99); }
+
+    .btn-outline {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: border-color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--border-hover); }
+
+    /* ── INFO SCREEN ── */
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+    .info-card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+      color: var(--accent-bright);
+    }
+    .info-card p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+    .info-card ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .info-card ul li {
+      font-size: 14px;
+      color: var(--text-muted);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.5;
+    }
+    .info-card ul li:last-child { border-bottom: none; }
+    .info-card ul li::before { content: '—'; color: var(--accent); flex-shrink: 0; font-size: 12px; }
+
+    /* ── TRACKING SCREEN ── */
+    .track-input-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .track-input-row .form-input { flex: 1; }
+    .track-btn {
+      padding: 14px 18px;
+      background: var(--accent-bright);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .track-btn:hover { opacity: 0.85; }
+    .track-result {
+      margin-top: 24px;
+      display: none;
+    }
+    .track-result.visible { display: block; }
+    .status-timeline { margin-top: 16px; }
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 24px;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 30px;
+      bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+    .timeline-item:last-child::before { display: none; }
+    .tl-dot {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+      background: var(--bg);
+    }
+    .tl-dot.done { background: rgba(74,222,128,0.1); border-color: var(--success); color: var(--success); }
+    .tl-dot.current { background: rgba(255,255,255,0.08); border-color: var(--accent); color: var(--accent); }
+    .tl-content { padding-top: 4px; }
+    .tl-content strong { font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px; }
+    .tl-content span { font-size: 12px; color: var(--text-muted); }
+
+    /* ── CONTACT SCREEN ── */
+    .contact-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-top: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .contact-card:hover { border-color: var(--border-hover); }
+    .contact-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .contact-icon.whatsapp { background: rgba(37,211,102,0.12); }
+    .contact-icon.phone { background: rgba(255,255,255,0.06); }
+    .contact-icon.email { background: rgba(96,165,250,0.1); }
+    .contact-details { flex: 1; }
+    .contact-details strong { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; display: block; margin-bottom: 4px; }
+    .contact-details span { font-size: 13px; color: var(--text-muted); }
+
+    /* ── SUCCESS SCREEN ── */
+    #screen-success {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .success-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 1px solid rgba(74,222,128,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 28px;
+      background: rgba(74,222,128,0.08);
+      animation: successPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    @keyframes successPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .success-ref {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .success-ref span {
+      color: var(--accent-bright);
+      font-weight: 600;
+    }
+    .success-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .success-msg {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 300px;
+      margin: 0 auto 28px;
+    }
+
+    /* ── UPLOAD ZONE ── */
+    .upload-zone {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-top: 8px;
+    }
+    .upload-zone:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.02); }
+    .upload-zone p { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+    .upload-zone .icon { font-size: 24px; }
+    .upload-zone input { display: none; }
+    .file-list { margin-top: 12px; }
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .file-item .remove { margin-left: auto; cursor: pointer; color: var(--text-muted); font-size: 16px; }
+    .file-item .remove:hover { color: var(--error); }
+
+    /* Notification toast */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 22px;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s;
+      white-space: nowrap;
+      z-index: 999;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ════════════════════ HOME ════════════════════ -->
+  <div id="screen-home" class="screen active">
+    <div class="logo-area">
+      <svg class="car-icon" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 55 C20 55 35 30 70 25 L90 22 C110 20 130 20 150 25 L175 40 C185 43 192 50 190 57 L185 60 C183 55 175 50 165 50 C152 50 142 58 142 68 L58 68 C58 58 48 50 35 50 C25 50 17 57 17 60 Z" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="rgba(255,255,255,0.04)"/>
+        <circle cx="35" cy="68" r="10" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="rgba(255,255,255,0.05)"/>
+        <circle cx="165" cy="68" r="10" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="rgba(255,255,255,0.05)"/>
+        <path d="M70 25 L80 42 L140 42 L155 28" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+        <path d="M80 42 L85 25" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+        <path d="M125 42 L130 25" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+      </svg>
+      <div class="brand-name">ESTHETICAR</div>
+    </div>
+
+    <div class="menu-list">
+      <button class="menu-btn" onclick="navigate('screen-info')">
+        <div class="menu-icon">📖</div>
+        S'INFORMER
+        <span class="arrow">›</span>
+      </button>
+      <button class="menu-btn" onclick="navigate('screen-demande-step1')">
+        <div class="menu-icon">📋</div>
+        FAIRE UNE DEMANDE
+        <span class="arrow">›</span>
+      </button>
+      <button class="menu-btn" onclick="navigate('screen-tracking')">
+        <div class="menu-icon">🕐</div>
+        SUIVRE MA DEMANDE
+        <span class="arrow">›</span>
+      </button>
+      <button class="menu-btn" onclick="navigate('screen-contact')">
+        <div class="menu-icon">💬</div>
+        CONTACTER
+        <span class="arrow">›</span>
+      </button>
+    </div>
+
+    <div class="footer-copy">© 2024 ESTHETICAR</div>
+  </div>
+
+  <!-- ════════════════════ S'INFORMER ════════════════════ -->
+  <div id="screen-info" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="goBack()">‹</button>
+      <div class="page-title">S'INFORMER</div>
+      <div class="spacer"></div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="info-card">
+        <h3>QU'EST-CE QU'UNE CARTE GRISE ?</h3>
+        <p>La carte grise (certificat d'immatriculation) est le document officiel qui atteste de l'identité du véhicule et de son propriétaire en France.</p>
+      </div>
+      <div class="section-label">Documents requis</div>
+      <div class="info-card">
+        <ul>
+          <li>Pièce d'identité valide (CNI ou passeport)</li>
+          <li>Justificatif de domicile de moins de 6 mois</li>
+          <li>Certificat de cession (si achat)</li>
+          <li>Contrôle technique en cours de validité</li>
+          <li>Certificat de conformité européen</li>
+          <li>Code de cession (si applicable)</li>
+        </ul>
+      </div>
+      <div class="section-label">Délais & tarifs</div>
+      <div class="info-card">
+        <h3>DÉLAI DE TRAITEMENT</h3>
+        <p>Le délai moyen est de <strong style="color:var(--accent-bright)">5 à 10 jours ouvrés</strong> selon le type de demande. Un certificat provisoire d'immatriculation (CPI) vous est transmis immédiatement par email.</p>
+      </div>
+      <div class="info-card" style="margin-top:10px">
+        <h3>NOS TARIFS</h3>
+        <p>Nos frais de service s'ajoutent aux taxes officielles ANTS. Contactez-nous pour un devis personnalisé selon votre véhicule.</p>
+      </div>
+      <button class="btn-primary" onclick="navigate('screen-demande-step1')">FAIRE UNE DEMANDE</button>
+      <div style="height: 24px;"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ DEMANDE — ÉTAPE 1 ════════════════════ -->
+  <div id="screen-demande-step1" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="goBack()">‹</button>
+      <div class="page-title">MA DEMANDE</div>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="steps-bar">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <div class="section-label">Type de demande</div>
+    <div class="type-pills" id="type-pills">
+      <button class="pill-btn selected" onclick="selectType(this)">CHANGEMENT<br>PROPRIÉTAIRE</button>
+      <button class="pill-btn" onclick="selectType(this)">PREMIER<br>IMMAT.</button>
+      <button class="pill-btn" onclick="selectType(this)">DUPLICATA</button>
+      <button class="pill-btn" onclick="selectType(this)">CHANGEMENT<br>D'ADRESSE</button>
+    </div>
+
+    <div class="section-label">Informations véhicule</div>
+    <label class="form-label">IMMATRICULATION</label>
+    <input class="form-input" type="text" placeholder="AB-123-CD" id="input-immat" maxlength="9" oninput="formatImmat(this)" />
+
+    <label class="form-label">MARQUE</label>
+    <select class="form-select" id="input-marque">
+      <option value="">Sélectionner...</option>
+      <option>AUDI</option><option>BMW</option><option>CITROËN</option>
+      <option>DACIA</option><option>FIAT</option><option>FORD</option>
+      <option>HONDA</option><option>HYUNDAI</option><option>KIA</option>
+      <option>MAZDA</option><option>MERCEDES</option><option>NISSAN</option>
+      <option>OPEL</option><option>PEUGEOT</option><option>RENAULT</option>
+      <option>SEAT</option><option>SKODA</option><option>SUZUKI</option>
+      <option>TESLA</option><option>TOYOTA</option><option>VOLKSWAGEN</option>
+      <option>VOLVO</option><option>AUTRE</option>
+    </select>
+
+    <label class="form-label">MODÈLE</label>
+    <input class="form-input" type="text" placeholder="Ex : Golf, 308, Clio..." id="input-modele" />
+
+    <label class="form-label">ANNÉE</label>
+    <input class="form-input" type="number" placeholder="Ex : 2019" id="input-annee" min="1970" max="2025" />
+
+    <button class="btn-primary" onclick="goToStep2()">ÉTAPE SUIVANTE →</button>
+    <div style="height: 32px;"></div>
+  </div>
+
+  <!-- ════════════════════ DEMANDE — ÉTAPE 2 ════════════════════ -->
+  <div id="screen-demande-step2" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="goBack()">‹</button>
+      <div class="page-title">VOS COORDONNÉES</div>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="steps-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <label class="form-label">NOM ET PRÉNOM</label>
+    <input class="form-input" type="text" placeholder="Jean Dupont" id="input-nom" />
+
+    <label class="form-label">EMAIL</label>
+    <input class="form-input" type="email" placeholder="jean@email.com" id="input-email" />
+
+    <label class="form-label">TÉLÉPHONE</label>
+    <input class="form-input" type="tel" placeholder="06 00 00 00 00" id="input-tel" />
+
+    <label class="form-label">ADRESSE COMPLÈTE</label>
+    <input class="form-input" type="text" placeholder="15 rue de la Paix" id="input-adresse" />
+
+    <label class="form-label">CODE POSTAL</label>
+    <input class="form-input" type="text" placeholder="75001" id="input-cp" maxlength="5" />
+
+    <label class="form-label">VILLE</label>
+    <input class="form-input" type="text" placeholder="Paris" id="input-ville" />
+
+    <button class="btn-primary" onclick="goToStep3()">ÉTAPE SUIVANTE →</button>
+    <div style="height: 32px;"></div>
+  </div>
+
+  <!-- ════════════════════ DEMANDE — ÉTAPE 3 ════════════════════ -->
+  <div id="screen-demande-step3" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="goBack()">‹</button>
+      <div class="page-title">DOCUMENTS</div>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="steps-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+    </div>
+
+    <div class="section-label">Pièces justificatives</div>
+
+    <label class="form-label">PIÈCE D'IDENTITÉ</label>
+    <div class="upload-zone" onclick="triggerUpload('upload-id')">
+      <div class="icon">🪪</div>
+      <p>Appuyer pour ajouter</p>
+      <input type="file" id="upload-id" accept="image/*,application/pdf" onchange="handleFile(this, 'list-id')" />
+    </div>
+    <div class="file-list" id="list-id"></div>
+
+    <label class="form-label">JUSTIFICATIF DE DOMICILE</label>
+    <div class="upload-zone" onclick="triggerUpload('upload-dom')">
+      <div class="icon">🏠</div>
+      <p>Appuyer pour ajouter</p>
+      <input type="file" id="upload-dom" accept="image/*,application/pdf" onchange="handleFile(this, 'list-dom')" />
+    </div>
+    <div class="file-list" id="list-dom"></div>
+
+    <label class="form-label">CERTIFICAT DE CESSION</label>
+    <div class="upload-zone" onclick="triggerUpload('upload-cess')">
+      <div class="icon">📄</div>
+      <p>Appuyer pour ajouter</p>
+      <input type="file" id="upload-cess" accept="image/*,application/pdf" onchange="handleFile(this, 'list-cess')" />
+    </div>
+    <div class="file-list" id="list-cess"></div>
+
+    <label class="form-label">CONTRÔLE TECHNIQUE (si requis)</label>
+    <div class="upload-zone" onclick="triggerUpload('upload-ct')">
+      <div class="icon">🔧</div>
+      <p>Appuyer pour ajouter</p>
+      <input type="file" id="upload-ct" accept="image/*,application/pdf" onchange="handleFile(this, 'list-ct')" />
+    </div>
+    <div class="file-list" id="list-ct"></div>
+
+    <label class="form-label">NOTE COMPLÉMENTAIRE (optionnel)</label>
+    <textarea class="form-input" placeholder="Précisez toute information utile pour votre demande..." id="input-note"></textarea>
+
+    <button class="btn-primary" onclick="submitDemande()">ENVOYER MA DEMANDE ✓</button>
+    <button class="btn-outline" onclick="navigate('screen-home')">ANNULER</button>
+    <div style="height: 32px;"></div>
+  </div>
+
+  <!-- ════════════════════ SUCCÈS ════════════════════ -->
+  <div id="screen-success" class="screen">
+    <div class="success-icon">✓</div>
+    <div class="success-title">DEMANDE ENVOYÉE</div>
+    <div class="success-msg">Votre dossier a bien été transmis. Vous recevrez une confirmation par email sous 24h.</div>
+    <div class="success-ref">N° DE RÉFÉRENCE : <span id="success-ref-num">—</span></div>
+    <button class="btn-primary" style="margin-top:36px" onclick="navigate('screen-home')">RETOUR À L'ACCUEIL</button>
+    <button class="btn-outline" onclick="navigate('screen-tracking')">SUIVRE MA DEMANDE</button>
+  </div>
+
+  <!-- ════════════════════ SUIVI ════════════════════ -->
+  <div id="screen-tracking" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="goBack()">‹</button>
+      <div class="page-title">SUIVI DEMANDE</div>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="track-input-row">
+      <input class="form-input" type="text" placeholder="N° de référence" id="track-ref-input" />
+      <button class="track-btn" onclick="trackDemande()">CHERCHER</button>
+    </div>
+
+    <div class="track-result" id="track-result">
+      <div class="info-card" style="margin-top:0">
+        <h3 id="track-title">DEMANDE #EST-2024-XXXX</h3>
+        <p id="track-vehicle" style="font-size:13px; margin-bottom:4px"></p>
+        <p id="track-date" style="font-size:12px; color:var(--text-muted)"></p>
+      </div>
+      <div class="section-label">PROGRESSION</div>
+      <div class="status-timeline">
+        <div class="timeline-item">
+          <div class="tl-dot done">✓</div>
+          <div class="tl-content"><strong>Dossier reçu</strong><span>Votre demande a été enregistrée</span></div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-dot done">✓</div>
+          <div class="tl-content"><strong>Documents vérifiés</strong><span>Pièces justificatives validées</span></div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-dot current">⟳</div>
+          <div class="tl-content"><strong>En traitement ANTS</strong><span>Soumis auprès de l'administration</span></div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content"><strong>Carte grise éditée</strong><span>En attente</span></div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content"><strong>Expédiée</strong><span>En attente</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="height: 32px;"></div>
+  </div>
+
+  <!-- ════════════════════ CONTACT ════════════════════ -->
+  <div id="screen-contact" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="goBack()">‹</button>
+      <div class="page-title">NOUS CONTACTER</div>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="section-label" style="margin-top:24px">Canaux disponibles</div>
+
+    <a class="contact-card" href="https://wa.me/33600000000" target="_blank">
+      <div class="contact-icon whatsapp">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" fill="#25D366"/></svg>
+      </div>
+      <div class="contact-details">
+        <strong>WHATSAPP</strong>
+        <span>Réponse rapide · 7j/7</span>
+      </div>
+      <span style="color:var(--text-muted)">›</span>
+    </a>
+
+    <a class="contact-card" href="tel:+33600000000">
+      <div class="contact-icon phone">📞</div>
+      <div class="contact-details">
+        <strong>TÉLÉPHONE</strong>
+        <span>06 00 00 00 00 · Lun–Sam 9h–18h</span>
+      </div>
+      <span style="color:var(--text-muted)">›</span>
+    </a>
+
+    <a class="contact-card" href="mailto:contact@estheticar.fr">
+      <div class="contact-icon email">✉️</div>
+      <div class="contact-details">
+        <strong>EMAIL</strong>
+        <span>contact@estheticar.fr</span>
+      </div>
+      <span style="color:var(--text-muted)">›</span>
+    </a>
+
+    <div class="section-label">Message direct</div>
+    <label class="form-label">VOTRE MESSAGE</label>
+    <input class="form-input" type="text" placeholder="Sujet" id="contact-sujet" style="margin-bottom:10px" />
+    <textarea class="form-input" placeholder="Décrivez votre demande..." id="contact-msg"></textarea>
+    <button class="btn-primary" onclick="sendContact()">ENVOYER LE MESSAGE</button>
+    <div style="height: 32px;"></div>
+  </div>
+
+</div><!-- /#app -->
+
+<div id="toast"></div>
+
+<script>
+  // ── Navigation Stack ──
+  let history = [];
+  let currentScreen = 'screen-home';
+
+  function navigate(id) {
+    const prev = document.getElementById(currentScreen);
+    prev.classList.add('exit');
+    prev.classList.remove('active');
+    setTimeout(() => prev.classList.remove('exit'), 400);
+
+    history.push(currentScreen);
+    currentScreen = id;
+
+    const next = document.getElementById(id);
+    next.classList.add('active');
+    next.scrollTop = 0;
+  }
+
+  function goBack() {
+    if (!history.length) return;
+    const prev = document.getElementById(currentScreen);
+    prev.style.transition = 'opacity 0.3s, transform 0.3s';
+    prev.classList.remove('active');
+    prev.style.transform = 'translateX(30px)';
+    setTimeout(() => { prev.style.transform = ''; prev.style.transition = ''; }, 350);
+
+    currentScreen = history.pop();
+    const next = document.getElementById(currentScreen);
+    next.classList.add('active');
+    next.scrollTop = 0;
+  }
+
+  // ── Type pills ──
+  function selectType(btn) {
+    document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  // ── Immat format ──
+  function formatImmat(input) {
+    let v = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (v.length > 2 && v.length <= 5) v = v.slice(0,2) + '-' + v.slice(2);
+    else if (v.length > 5) v = v.slice(0,2) + '-' + v.slice(2,5) + '-' + v.slice(5,7);
+    input.value = v;
+  }
+
+  // ── Upload ──
+  function triggerUpload(id) { document.getElementById(id).click(); }
+  function handleFile(input, listId) {
+    const list = document.getElementById(listId);
+    Array.from(input.files).forEach(f => {
+      const item = document.createElement('div');
+      item.className = 'file-item';
+      item.innerHTML = `<span>📎</span><span>${f.name}</span><span class="remove" onclick="this.parentElement.remove()">✕</span>`;
+      list.appendChild(item);
+    });
+    input.value = '';
+  }
+
+  // ── Step validations ──
+  function goToStep2() {
+    if (!document.getElementById('input-immat').value || !document.getElementById('input-marque').value) {
+      showToast('Veuillez remplir les champs obligatoires');
+      return;
+    }
+    navigate('screen-demande-step2');
+  }
+  function goToStep3() {
+    if (!document.getElementById('input-nom').value || !document.getElementById('input-email').value) {
+      showToast('Veuillez remplir les champs obligatoires');
+      return;
+    }
+    navigate('screen-demande-step3');
+  }
+  function submitDemande() {
+    const ref = 'EST-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('success-ref-num').textContent = ref;
+    navigate('screen-success');
+  }
+
+  // ── Tracking ──
+  function trackDemande() {
+    const val = document.getElementById('track-ref-input').value.trim();
+    if (!val) { showToast('Entrez un numéro de référence'); return; }
+    document.getElementById('track-title').textContent = 'DEMANDE #' + val.toUpperCase();
+    document.getElementById('track-vehicle').textContent = 'Renault Clio — AB-456-CD';
+    document.getElementById('track-date').textContent = 'Soumise le ' + new Date().toLocaleDateString('fr-FR');
+    document.getElementById('track-result').classList.add('visible');
+  }
+
+  // ── Contact ──
+  function sendContact() {
+    if (!document.getElementById('contact-msg').value) { showToast('Veuillez écrire un message'); return; }
+    document.getElementById('contact-sujet').value = '';
+    document.getElementById('contact-msg').value = '';
+    showToast('Message envoyé avec succès ✓');
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── PWA Service Worker ──
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>
