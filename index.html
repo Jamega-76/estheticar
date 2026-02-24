@@ -542,7 +542,14 @@
 
   <!-- ════════════════════ HOME ════════════════════ -->
   <div id="screen-home" class="screen active">
-    <div class="logo-area">
+    <div style="display:flex; justify-content:flex-end; padding-top:48px;">
+      <button class="back-btn" onclick="shareApp()" title="Partager" style="width:auto; padding: 0 16px; border-radius:20px; gap:8px; display:flex; align-items:center; font-family:'Montserrat',sans-serif; font-size:11px; font-weight:600; letter-spacing:1.5px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        PARTAGER
+      </button>
+    </div>
+
+    <div class="logo-area" style="padding-top:32px;">
       <svg class="car-icon" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M20 55 C20 55 35 30 70 25 L90 22 C110 20 130 20 150 25 L175 40 C185 43 192 50 190 57 L185 60 C183 55 175 50 165 50 C152 50 142 58 142 68 L58 68 C58 58 48 50 35 50 C25 50 17 57 17 60 Z" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="rgba(255,255,255,0.04)"/>
         <circle cx="35" cy="68" r="10" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="rgba(255,255,255,0.05)"/>
@@ -844,11 +851,11 @@
       <span style="color:var(--text-muted)">›</span>
     </a>
 
-    <a class="contact-card" href="mailto:contact@estheticar.fr">
+    <a class="contact-card" href="/cdn-cgi/l/email-protection#86e5e9e8f2e7e5f2c6e3f5f2eee3f2efe5e7f4a8e0f4">
       <div class="contact-icon email">✉️</div>
       <div class="contact-details">
         <strong>EMAIL</strong>
-        <span>contact@estheticar.fr</span>
+        <span><span class="__cf_email__" data-cfemail="b7d4d8d9c3d6d4c3f7d2c4c3dfd2c3ded4d6c599d1c5">[email&#160;protected]</span></span>
       </div>
       <span style="color:var(--text-muted)">›</span>
     </a>
@@ -865,7 +872,7 @@
 
 <div id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // ── Navigation Stack ──
   let history = [];
   let currentScreen = 'screen-home';
@@ -964,18 +971,24 @@
     showToast('Message envoyé avec succès ✓');
   }
 
+  // ── Share ──
+  function shareApp() {
+    const data = {
+      title: 'ESTHETICAR',
+      text: 'Faites votre demande de carte grise en ligne facilement.',
+      url: window.location.href
+    };
+    if (navigator.share) {
+      navigator.share(data).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast('Lien copié dans le presse-papier ✓');
+      });
+    }
+  }
+
   // ── Toast ──
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
-  }
-
-  // ── PWA Service Worker ──
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  }
-</script>
-</body>
-</html>
+    t.classL
