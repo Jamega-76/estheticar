@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <title>Faire une demande — ESTHETICAR</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #161616;
+      --surface2: #1c1c1c;
+      --border: rgba(255,255,255,0.12);
+      --border-hover: rgba(255,255,255,0.28);
+      --border-focus: rgba(255,255,255,0.6);
+      --text: #f0f0f0;
+      --text-muted: rgba(255,255,255,0.45);
+      --accent: #c8c8c8;
+      --accent-bright: #ffffff;
+      --success: #4ade80;
+      --error: #f87171;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+    }
+
+    #app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 52px 0 28px;
+      gap: 12px;
+    }
+    .back-btn {
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+    .back-btn:hover { border-color: var(--border-hover); background: var(--surface); }
+    .page-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      flex: 1;
+      text-align: center;
+    }
+    .spacer { width: 40px; }
+
+    /* ── STEPS BAR ── */
+    .steps-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 32px;
+    }
+    .step-dot {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border);
+      flex: 1;
+      transition: background 0.4s;
+    }
+    .step-dot.done { background: var(--accent); }
+    .step-dot.active { background: var(--accent-bright); }
+
+    /* ── STEP PANELS ── */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── STEP TITLE ── */
+    .step-heading {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .step-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin: 28px 0 12px;
+    }
+    .section-label:first-child { margin-top: 0; }
+
+    /* ── FORM ELEMENTS ── */
+    .form-label {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      margin-top: 18px;
+    }
+    .form-label:first-child { margin-top: 0; }
+    .required { color: var(--error); margin-left: 2px; }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-size: 15px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+    }
+    .form-input.error, .form-select.error { border-color: var(--error); }
+    .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.18); }
+    .form-select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath fill='none' stroke='%23888' stroke-width='1.5' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+    .form-select option { background: #1c1c1c; }
+    .form-textarea { resize: none; min-height: 100px; line-height: 1.6; }
+
+    /* Error hint */
+    .field-error {
+      font-size: 11px;
+      color: var(--error);
+      margin-top: 6px;
+      display: none;
+    }
+    .field-error.visible { display: block; }
+
+    /* ── TYPE PILLS ── */
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .type-pill {
+      padding: 16px 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      cursor: pointer;
+      text-align: center;
+      line-height: 1.4;
+      transition: all 0.2s;
+    }
+    .type-pill.selected {
+      border-color: var(--accent-bright);
+      color: var(--accent-bright);
+      background: rgba(255,255,255,0.05);
+    }
+    .type-pill .pill-icon { font-size: 18px; display: block; margin-bottom: 6px; }
+
+    /* ── UPLOAD ZONE ── */
+    .upload-zone {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 22px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .upload-zone:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.02); }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer;
+      width: 100%; height: 100%;
+    }
+    .upload-zone .uz-icon { font-size: 26px; margin-bottom: 8px; }
+    .upload-zone .uz-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+    }
+    .upload-zone .uz-sub { font-size: 12px; color: var(--text-muted); }
+
+    .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      animation: fadeIn 0.2s ease;
+    }
+    .file-item .fi-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-item .fi-size { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+    .file-item .fi-remove {
+      cursor: pointer; color: var(--text-muted);
+      font-size: 18px; flex-shrink: 0; line-height: 1;
+      transition: color 0.2s;
+    }
+    .file-item .fi-remove:hover { color: var(--error); }
+
+    /* ── CHECKBOX ── */
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .checkbox-row input[type="checkbox"] { display: none; }
+    .custom-check {
+      width: 22px; height: 22px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface2);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      transition: all 0.2s;
+      margin-top: 1px;
+    }
+    .checkbox-row.checked .custom-check {
+      background: var(--accent-bright);
+      border-color: var(--accent-bright);
+      color: #000;
+    }
+    .checkbox-label { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .checkbox-label strong { color: var(--text); }
+
+    /* ── BOUTONS ── */
+    .btn-primary {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent-bright);
+      color: #000;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      margin-top: 28px;
+      transition: opacity 0.2s, transform 0.15s;
+      display: block;
+      text-align: center;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:active { transform: scale(0.99); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-outline {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--border-hover); color: var(--text); }
+
+    /* ── SUCCESS ── */
+    #success-screen {
+      display: none;
+      text-align: center;
+      padding-top: 60px;
+      animation: fadeIn 0.5s ease;
+    }
+    .success-circle {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      border: 1px solid rgba(74,222,128,0.3);
+      background: rgba(74,222,128,0.07);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 28px;
+      animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .success-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+    .success-msg {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      max-width: 300px;
+      margin: 0 auto 20px;
+    }
+    .success-ref {
+      display: inline-block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+    }
+    .success-ref span { color: var(--accent-bright); font-weight: 700; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 22px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s;
+      white-space: nowrap;
+      z-index: 999;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.error-toast { border-color: var(--error); color: var(--error); }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+    /* ── ROW ── */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <a href="index.html" class="back-btn" id="back-link">‹</a>
+    <div class="page-title" id="page-title">MA DEMANDE</div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- ══ FORMULAIRE ══ -->
+  <div id="form-wrapper">
+
+    <!-- Barre de progression -->
+    <div class="steps-bar">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+    </div>
+
+    <!-- ─────────── ÉTAPE 1 — Type & Véhicule ─────────── -->
+    <div class="step-panel active" id="step-1">
+      <div class="step-heading">Type de demande</div>
+      <div class="step-sub">Sélectionnez le type de démarche puis renseignez les informations de votre véhicule.</div>
+
+      <div class="section-label">Quelle démarche souhaitez-vous effectuer ?</div>
+      <div class="type-grid" id="type-grid">
+        <button class="type-pill selected" data-value="cession" onclick="selectType(this)">
+          <span class="pill-icon">🔄</span>CHANGEMENT DE PROPRIÉTAIRE
+        </button>
+        <button class="type-pill" data-value="premiere" onclick="selectType(this)">
+          <span class="pill-icon">🆕</span>PREMIÈRE IMMATRICULATION
+        </button>
+        <button class="type-pill" data-value="duplicata" onclick="selectType(this)">
+          <span class="pill-icon">📋</span>DUPLICATA
+        </button>
+        <button class="type-pill" data-value="adresse" onclick="selectType(this)">
+          <span class="pill-icon">🏠</span>CHANGEMENT D'ADRESSE
+        </button>
+      </div>
+
+      <div class="section-label">Informations du véhicule</div>
+
+      <label class="form-label">IMMATRICULATION <span class="required">*</span></label>
+      <input class="form-input" id="immat" type="text" placeholder="AB-123-CD" maxlength="9" autocomplete="off" />
+      <div class="field-error" id="err-immat">Format attendu : AB-123-CD</div>
+
+      <div class="row-2">
+        <div>
+          <label class="form-label">MARQUE <span class="required">*</span></label>
+          <select class="form-select" id="marque">
+            <option value="">Sélectionner...</option>
+            <option>AUDI</option><option>BMW</option><option>CITROËN</option>
+            <option>DACIA</option><option>FIAT</option><option>FORD</option>
+            <option>HONDA</option><option>HYUNDAI</option><option>KIA</option>
+            <option>MAZDA</option><option>MERCEDES</option><option>NISSAN</option>
+            <option>OPEL</option><option>PEUGEOT</option><option>RENAULT</option>
+            <option>SEAT</option><option>SKODA</option><option>SUZUKI</option>
+            <option>TESLA</option><option>TOYOTA</option><option>VOLKSWAGEN</option>
+            <option>VOLVO</option><option>AUTRE</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">ANNÉE <span class="required">*</span></label>
+          <input class="form-input" id="annee" type="number" placeholder="2020" min="1970" max="2025" />
+        </div>
+      </div>
+
+      <label class="form-label">MODÈLE <span class="required">*</span></label>
+      <input class="form-input" id="modele" type="text" placeholder="Clio, 308, Golf..." />
+
+      <label class="form-label">ÉNERGIE</label>
+      <select class="form-select" id="energie">
+        <option value="">Sélectionner...</option>
+        <option>ESSENCE</option>
+        <option>DIESEL</option>
+        <option>HYBRIDE</option>
+        <option>ÉLECTRIQUE</option>
+        <option>GPL</option>
+        <option>AUTRE</option>
+      </select>
+
+      <label class="form-label">KILOMÉTRAGE</label>
+      <input class="form-input" id="km" type="number" placeholder="Ex : 45000" min="0" />
+
+      <label class="form-label">NUMÉRO VIN (châssis)</label>
+      <input class="form-input" id="vin" type="text" placeholder="17 caractères" maxlength="17" style="letter-spacing:1px;" />
+
+      <button class="btn-primary" onclick="goStep(2)">ÉTAPE SUIVANTE →</button>
+    </div>
+
+    <!-- ─────────── ÉTAPE 2 — Coordonnées ─────────── -->
+    <div class="step-panel" id="step-2">
+      <div class="step-heading">Vos coordonnées</div>
+      <div class="step-sub">Ces informations nous permettront de vous contacter et de livrer votre carte grise.</div>
+
+      <div class="section-label">Identité</div>
+
+      <label class="form-label">CIVILITÉ</label>
+      <select class="form-select" id="civilite">
+        <option value="">Sélectionner...</option>
+        <option>M.</option>
+        <option>Mme</option>
+        <option>Société / Entreprise</option>
+      </select>
+
+      <div class="row-2">
+        <div>
+          <label class="form-label">NOM <span class="required">*</span></label>
+          <input class="form-input" id="nom" type="text" placeholder="DUPONT" autocomplete="family-name" />
+        </div>
+        <div>
+          <label class="form-label">PRÉNOM <span class="required">*</span></label>
+          <input class="form-input" id="prenom" type="text" placeholder="Jean" autocomplete="given-name" />
+        </div>
+      </div>
+
+      <label class="form-label">DATE DE NAISSANCE</label>
+      <input class="form-input" id="naissance" type="date" />
+
+      <div class="section-label">Contact</div>
+
+      <label class="form-label">EMAIL <span class="required">*</span></label>
+      <input class="form-input" id="email" type="email" placeholder="jean@email.com" autocomplete="email" />
+      <div class="field-error" id="err-email">Adresse email invalide</div>
+
+      <label class="form-label">TÉLÉPHONE <span class="required">*</span></label>
+      <input class="form-input" id="tel" type="tel" placeholder="06 00 00 00 00" autocomplete="tel" />
+
+      <div class="section-label">Adresse de livraison</div>
+
+      <label class="form-label">ADRESSE <span class="required">*</span></label>
+      <input class="form-input" id="adresse" type="text" placeholder="15 rue de la Paix" autocomplete="street-address" />
+
+      <label class="form-label">COMPLÉMENT D'ADRESSE</label>
+      <input class="form-input" id="adresse2" type="text" placeholder="Apt 3, Bât B..." />
+
+      <div class="row-2">
+        <div>
+          <label class="form-label">CODE POSTAL <span class="required">*</span></label>
+          <input class="form-input" id="cp" type="text" placeholder="75001" maxlength="5" autocomplete="postal-code" />
+        </div>
+        <div>
+          <label class="form-label">VILLE <span class="required">*</span></label>
+          <input class="form-input" id="ville" type="text" placeholder="Paris" autocomplete="address-level2" />
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="goStep(3)">ÉTAPE SUIVANTE →</button>
+      <button class="btn-outline" onclick="goStep(1)">← RETOUR</button>
+    </div>
+
+    <!-- ─────────── ÉTAPE 3 — Documents ─────────── -->
+    <div class="step-panel" id="step-3">
+      <div class="step-heading">Pièces justificatives</div>
+      <div class="step-sub">Photographiez ou scannez vos documents. Formats acceptés : JPG, PNG, PDF. Max 10 Mo par fichier.</div>
+
+      <!-- Pièce d'identité -->
+      <div class="section-label">Pièce d'identité <span class="required">*</span></div>
+      <div class="upload-zone" onclick="document.getElementById('up-id').click()">
+        <input type="file" id="up-id" accept="image/*,application/pdf" multiple onchange="handleFiles(this,'list-id')" />
+        <div class="uz-icon">🪪</div>
+        <div class="uz-title">CNI OU PASSEPORT</div>
+        <div class="uz-sub">Recto / Verso si carte d'identité</div>
+      </div>
+      <div class="file-list" id="list-id"></div>
+
+      <!-- Justificatif domicile -->
+      <div class="section-label">Justificatif de domicile <span class="required">*</span></div>
+      <div class="upload-zone" onclick="document.getElementById('up-dom').click()">
+        <input type="file" id="up-dom" accept="image/*,application/pdf" multiple onchange="handleFiles(this,'list-dom')" />
+        <div class="uz-icon">🏠</div>
+        <div class="uz-title">FACTURE OU RELEVÉ</div>
+        <div class="uz-sub">Moins de 6 mois</div>
+      </div>
+      <div class="file-list" id="list-dom"></div>
+
+      <!-- Certificat de cession -->
+      <div class="section-label" id="label-cess">Certificat de cession <span class="required">*</span></div>
+      <div class="upload-zone" onclick="document.getElementById('up-cess').click()">
+        <input type="file" id="up-cess" accept="image/*,application/pdf" multiple onchange="handleFiles(this,'list-cess')" />
+        <div class="uz-icon">📄</div>
+        <div class="uz-title">CERFA 15776</div>
+        <div class="uz-sub">Signé par les deux parties</div>
+      </div>
+      <div class="file-list" id="list-cess"></div>
+
+      <!-- Contrôle technique -->
+      <div class="section-label">Contrôle technique</div>
+      <div class="upload-zone" onclick="document.getElementById('up-ct').click()">
+        <input type="file" id="up-ct" accept="image/*,application/pdf" multiple onchange="handleFiles(this,'list-ct')" />
+        <div class="uz-icon">🔧</div>
+        <div class="uz-title">RAPPORT DE CONTRÔLE</div>
+        <div class="uz-sub">Obligatoire pour véhicule > 4 ans</div>
+      </div>
+      <div class="file-list" id="list-ct"></div>
+
+      <!-- Ancienne carte grise -->
+      <div class="section-label">Ancienne carte grise</div>
+      <div class="upload-zone" onclick="document.getElementById('up-cg').click()">
+        <input type="file" id="up-cg" accept="image/*,application/pdf" multiple onchange="handleFiles(this,'list-cg')" />
+        <div class="uz-icon">📋</div>
+        <div class="uz-title">CERTIFICAT D'IMMATRICULATION</div>
+        <div class="uz-sub">Recto / Verso</div>
+      </div>
+      <div class="file-list" id="list-cg"></div>
+
+      <!-- Note complémentaire -->
+      <div class="section-label">Note complémentaire</div>
+      <textarea class="form-textarea" id="note" placeholder="Précisez toute information utile pour votre dossier (code de cession, situation particulière...)"></textarea>
+
+      <!-- CGV -->
+      <div class="divider"></div>
+      <div class="checkbox-row" id="cgv-row" onclick="toggleCheck('cgv-check','cgv-row')">
+        <input type="checkbox" id="cgv-check" />
+        <div class="custom-check" id="cgv-icon"></div>
+        <div class="checkbox-label">
+          J'accepte les <strong>conditions générales de vente</strong> d'ESTHETICAR et certifie que les informations fournies sont exactes.
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="submitForm()" id="submit-btn">ENVOYER MA DEMANDE ✓</button>
+      <button class="btn-outline" onclick="goStep(2)">← RETOUR</button>
+    </div>
+
+  </div><!-- /#form-wrapper -->
+
+  <!-- ══ ÉCRAN SUCCÈS ══ -->
+  <div id="success-screen">
+    <div class="success-circle">✓</div>
+    <div class="success-title">DEMANDE ENVOYÉE !</div>
+    <div class="success-msg">
+      Votre dossier a bien été transmis à notre équipe. Vous recevrez une confirmation par email sous 24h avec votre certificat provisoire.
+    </div>
+    <div class="success-ref">N° DE RÉFÉRENCE : <span id="ref-num">—</span></div>
+    <a href="index.html" class="btn-primary" style="display:block; margin-top:0; text-decoration:none; text-align:center;">RETOUR À L'ACCUEIL</a>
+    <a href="index.html" class="btn-outline" style="display:block; text-decoration:none; text-align:center;" onclick="sessionStorage.setItem('goSuivi','1')">SUIVRE MA DEMANDE</a>
+  </div>
+
+</div><!-- /#app -->
+
+<div id="toast"></div>
+
+<script>
+  // ── État global ──
+  let currentStep = 1;
+  let selectedType = 'cession';
+
+  // ── Type de demande ──
+  function selectType(btn) {
+    document.querySelectorAll('.type-pill').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedType = btn.dataset.value;
+  }
+
+  // ── Navigation entre étapes ──
+  function goStep(n) {
+    // Validation avant de passer
+    if (n > currentStep && !validateStep(currentStep)) return;
+
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step-' + n).classList.add('active');
+
+    // Mise à jour des points
+    for (let i = 1; i <= 3; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.className = 'step-dot';
+      if (i < n) dot.classList.add('done');
+      else if (i === n) dot.classList.add('active');
+    }
+
+    // Bouton retour : step 1 => retour index, sinon retour étape précédente
+    const backLink = document.getElementById('back-link');
+    backLink.href = n === 1 ? 'index.html' : '#';
+    backLink.onclick = n === 1 ? null : (e => { e.preventDefault(); goStep(n - 1); });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Validation ──
+  function validateStep(step) {
+    let valid = true;
+
+    if (step === 1) {
+      const immat = document.getElementById('immat');
+      const marque = document.getElementById('marque');
+      const modele = document.getElementById('modele');
+      const annee = document.getElementById('annee');
+      const immatRegex = /^[A-Z]{2}-\d{3}-[A-Z]{2}$/;
+
+      if (!immatRegex.test(immat.value.toUpperCase())) {
+        showFieldError('err-immat', immat); valid = false;
+      } else hideFieldError('err-immat', immat);
+
+      if (!marque.value) { marque.classList.add('error'); valid = false; }
+      else marque.classList.remove('error');
+
+      if (!modele.value.trim()) { modele.classList.add('error'); valid = false; }
+      else modele.classList.remove('error');
+
+      if (!annee.value || annee.value < 1970 || annee.value > 2025) {
+        annee.classList.add('error'); valid = false;
+      } else annee.classList.remove('error');
+    }
+
+    if (step === 2) {
+      const nom = document.getElementById('nom');
+      const prenom = document.getElementById('prenom');
+      const email = document.getElementById('email');
+      const tel = document.getElementById('tel');
+      const adresse = document.getElementById('adresse');
+      const cp = document.getElementById('cp');
+      const ville = document.getElementById('ville');
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      [nom, prenom, adresse, ville].forEach(f => {
+        if (!f.value.trim()) { f.classList.add('error'); valid = false; }
+        else f.classList.remove('error');
+      });
+
+      if (!emailRegex.test(email.value)) {
+        showFieldError('err-email', email); valid = false;
+      } else hideFieldError('err-email', email);
+
+      if (!tel.value.trim() || tel.value.replace(/\s/g,'').length < 10) {
+        tel.classList.add('error'); valid = false;
+      } else tel.classList.remove('error');
+
+      if (!cp.value.trim() || cp.value.length !== 5) {
+        cp.classList.add('error'); valid = false;
+      } else cp.classList.remove('error');
+    }
+
+    if (!valid) showToast('Veuillez corriger les champs en rouge', true);
+    return valid;
+  }
+
+  function showFieldError(errId, input) {
+    document.getElementById(errId).classList.add('visible');
+    input.classList.add('error');
+  }
+  function hideFieldError(errId, input) {
+    document.getElementById(errId).classList.remove('visible');
+    input.classList.remove('error');
+  }
+
+  // ── Format immat à la volée ──
+  document.getElementById('immat').addEventListener('input', function() {
+    let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (v.length > 2 && v.length <= 5) v = v.slice(0,2) + '-' + v.slice(2);
+    else if (v.length > 5) v = v.slice(0,2) + '-' + v.slice(2,5) + '-' + v.slice(5,7);
+    this.value = v;
+  });
+
+  // ── Upload fichiers ──
+  function handleFiles(input, listId) {
+    const list = document.getElementById(listId);
+    Array.from(input.files).forEach(file => {
+      if (file.size > 10 * 1024 * 1024) {
+        showToast('Fichier trop volumineux (max 10 Mo)', true); return;
+      }
+      const ext = file.name.split('.').pop().toUpperCase();
+      const size = file.size < 1024 * 1024
+        ? Math.round(file.size / 1024) + ' Ko'
+        : (file.size / (1024*1024)).toFixed(1) + ' Mo';
+
+      const icons = { PDF: '📄', JPG: '🖼️', JPEG: '🖼️', PNG: '🖼️' };
+      const icon = icons[ext] || '📎';
+
+      const item = document.createElement('div');
+      item.className = 'file-item';
+      item.innerHTML = `
+        <span>${icon}</span>
+        <span class="fi-name">${file.name}</span>
+        <span class="fi-size">${size}</span>
+        <span class="fi-remove" onclick="this.parentElement.remove()">✕</span>
+      `;
+      list.appendChild(item);
+    });
+    input.value = '';
+  }
+
+  // ── Checkbox CGV ──
+  function toggleCheck(checkId, rowId) {
+    const check = document.getElementById(checkId);
+    const row = document.getElementById(rowId);
+    const icon = document.getElementById(checkId.replace('check','icon'));
+    check.checked = !check.checked;
+    row.classList.toggle('checked', check.checked);
+    icon.textContent = check.checked ? '✓' : '';
+  }
+
+  // ── Soumission ──
+  function submitForm() {
+    if (!validateStep(3)) return;
+
+    const cgv = document.getElementById('cgv-check');
+    if (!cgv.checked) {
+      showToast("Veuillez accepter les conditions générales", true); return;
+    }
+
+    // Simulation envoi
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = 'ENVOI EN COURS...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      const ref = 'EST-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('ref-num').textContent = ref;
+      document.getElementById('form-wrapper').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 1500);
+  }
+
+  // ── Toast ──
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show' + (isError ? ' error-toast' : '');
+    setTimeout(() => { t.className = ''; }, 3000);
+  }
+</script>
+</body>
+</html>
