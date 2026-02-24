@@ -174,6 +174,15 @@
       font-size: 12px;
     }
 
+    #install-btn:hover {
+      border-color: rgba(255,255,255,0.4);
+      color: white;
+      background: rgba(255,255,255,0.04);
+    }
+    #install-btn.visible {
+      display: flex !important;
+    }
+
     .footer-copy {
       text-align: center;
       font-size: 11px;
@@ -690,6 +699,32 @@
     </div>
 
     <div class="footer-copy">© 2024 ESTHETICAR</div>
+
+    <!-- Bouton installation PWA -->
+    <button id="install-btn" onclick="installApp()" style="
+      display: none;
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px 20px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      color: rgba(255,255,255,0.7);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.25s;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    ">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v13M7 11l5 5 5-5"/><path d="M3 18h18v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2z"/>
+      </svg>
+      INSTALLER L'APPLICATION
+    </button>
   </div>
 
   <!-- ════════════════════ S'INFORMER ════════════════════ -->
@@ -1285,6 +1320,41 @@
     };
     window.open(urls[channel], '_blank');
     closeShareModal();
+  }
+
+  // ── PWA Install ──
+  let deferredPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install-btn').classList.add('visible');
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    document.getElementById('install-btn').classList.remove('visible');
+    showToast('Application installée avec succès ✓');
+  });
+
+  function installApp() {
+    if (!deferredPrompt) {
+      // Sur iOS, le prompt natif n'existe pas : on guide l'utilisateur
+      const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      if (isIos) {
+        showToast('Sur iOS : Safari → icône Partager → « Sur l\'écran d\'accueil »');
+      } else {
+        showToast('Utilisez le menu de votre navigateur pour installer');
+      }
+      return;
+    }
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((result) => {
+      if (result.outcome === 'accepted') {
+        document.getElementById('install-btn').classList.remove('visible');
+      }
+      deferredPrompt = null;
+    });
   }
 
   // ── Toast ──
