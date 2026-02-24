@@ -546,7 +546,7 @@
   <!-- ════════════════════ HOME ════════════════════ -->
   <div id="screen-home" class="screen active">
     <div style="display:flex; justify-content:flex-end; padding-top:48px;">
-      <button class="back-btn" onclick="shareApp()" title="Partager" style="width:auto; padding: 0 16px; border-radius:20px; gap:8px; display:flex; align-items:center; font-family:'Montserrat',sans-serif; font-size:11px; font-weight:600; letter-spacing:1.5px;">
+      <button class="back-btn" onclick="openShareModal()" title="Partager" style="width:auto; padding: 0 16px; border-radius:20px; gap:8px; display:flex; align-items:center; font-family:'Montserrat',sans-serif; font-size:11px; font-weight:600; letter-spacing:1.5px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         PARTAGER
       </button>
@@ -873,6 +873,46 @@
 
 </div><!-- /#app -->
 
+<!-- ── SHARE MODAL ── -->
+<div id="share-modal" style="
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,0.75);
+  display:none; align-items:flex-end; justify-content:center;
+  backdrop-filter:blur(4px);
+" onclick="if(event.target===this) closeShareModal()">
+  <div style="
+    background:#161616;
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:24px 24px 0 0;
+    padding:28px 24px 40px;
+    width:100%; max-width:480px;
+    transform:translateY(100%);
+    transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  " id="share-modal-inner">
+    <div style="width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 24px;"></div>
+    <div style="font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;margin-bottom:20px;text-align:center;">PARTAGER L'APPLICATION</div>
+    <div style="display:flex;gap:10px;align-items:center;background:#1c1c1c;border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 16px;margin-bottom:20px;">
+      <span style="font-size:13px;color:rgba(255,255,255,0.5);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">jamega.github.io/estheticar</span>
+      <button onclick="copyLink()" id="copy-btn" style="background:white;color:black;border:none;border-radius:8px;padding:8px 14px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;flex-shrink:0;">COPIER</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+      <button onclick="shareVia('whatsapp')" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px 8px;color:white;cursor:pointer;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" fill="#25D366"/></svg>
+        <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;">WHATSAPP</span>
+      </button>
+      <button onclick="shareVia('sms')" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px 8px;color:white;cursor:pointer;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;">SMS</span>
+      </button>
+      <button onclick="shareVia('email')" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px 8px;color:white;cursor:pointer;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;">EMAIL</span>
+      </button>
+    </div>
+    <button onclick="closeShareModal()" style="width:100%;padding:16px;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:14px;color:rgba(255,255,255,0.45);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;cursor:pointer;">FERMER</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -974,51 +1014,46 @@
     showToast('Message envoyé avec succès ✓');
   }
 
-  // ── Share ──
+  // ── Share Modal ──
   const SHARE_URL = 'https://jamega.github.io/estheticar/';
+  const SHARE_MSG = 'Faites votre demande de carte grise en ligne avec ESTHETICAR : ' + SHARE_URL;
 
-  function shareApp() {
-    if (navigator.share) {
-      navigator.share({
-        title: 'ESTHETICAR — Carte Grise',
-        text: 'Faites votre demande de carte grise en ligne facilement.',
-        url: SHARE_URL
-      })
-      .then(() => showToast('Merci pour le partage ! ✓'))
-      .catch(err => {
-        // L'utilisateur a annulé = AbortError, on ne montre rien
-        if (err.name !== 'AbortError') copyToClipboard();
-      });
-    } else {
-      copyToClipboard();
-    }
+  function openShareModal() {
+    const modal = document.getElementById('share-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => { document.getElementById('share-modal-inner').style.transform = 'translateY(0)'; }, 10);
   }
 
-  function copyToClipboard() {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(SHARE_URL)
-        .then(() => showToast('Lien copié dans le presse-papier ✓'))
-        .catch(() => fallbackCopy());
-    } else {
-      fallbackCopy();
-    }
+  function closeShareModal() {
+    document.getElementById('share-modal-inner').style.transform = 'translateY(100%)';
+    setTimeout(() => { document.getElementById('share-modal').style.display = 'none'; }, 350);
   }
 
-  function fallbackCopy() {
-    // Méthode universelle via input temporaire
+  function copyLink() {
+    const btn = document.getElementById('copy-btn');
+    // Double méthode pour max compatibilité
     const input = document.createElement('input');
     input.value = SHARE_URL;
-    input.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    input.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
     document.body.appendChild(input);
-    input.focus();
-    input.select();
-    try {
-      document.execCommand('copy');
-      showToast('Lien copié dans le presse-papier ✓');
-    } catch {
-      showToast('Lien : ' + SHARE_URL);
-    }
+    input.focus(); input.select();
+    try { document.execCommand('copy'); } catch(e) {}
     document.body.removeChild(input);
+    if (navigator.clipboard) navigator.clipboard.writeText(SHARE_URL).catch(() => {});
+    btn.textContent = '✓ COPIÉ';
+    btn.style.background = '#4ade80';
+    setTimeout(() => { btn.textContent = 'COPIER'; btn.style.background = 'white'; }, 2000);
+    showToast('Lien copié ✓');
+  }
+
+  function shareVia(channel) {
+    const urls = {
+      whatsapp: 'https://wa.me/?text=' + encodeURIComponent(SHARE_MSG),
+      sms: 'sms:?body=' + encodeURIComponent(SHARE_MSG),
+      email: 'mailto:?subject=' + encodeURIComponent('ESTHETICAR — Carte Grise en ligne') + '&body=' + encodeURIComponent(SHARE_MSG)
+    };
+    window.open(urls[channel], '_blank');
+    closeShareModal();
   }
 
   // ── Toast ──
