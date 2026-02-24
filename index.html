@@ -546,16 +546,113 @@
 
   <!-- ════════════════════ HOME ════════════════════ -->
   <div id="screen-home" class="screen active">
-    <div class="logo-area" style="padding-top:52px;">
-      <svg class="car-icon" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 55 C20 55 35 30 70 25 L90 22 C110 20 130 20 150 25 L175 40 C185 43 192 50 190 57 L185 60 C183 55 175 50 165 50 C152 50 142 58 142 68 L58 68 C58 58 48 50 35 50 C25 50 17 57 17 60 Z" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="rgba(255,255,255,0.04)"/>
-        <circle cx="35" cy="68" r="10" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="rgba(255,255,255,0.05)"/>
-        <circle cx="165" cy="68" r="10" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="rgba(255,255,255,0.05)"/>
-        <path d="M70 25 L80 42 L140 42 L155 28" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-        <path d="M80 42 L85 25" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-        <path d="M125 42 L130 25" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+    <div class="logo-area" style="padding-top:40px;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" style="width:280px; max-width:90%; height:auto; animation:floatCar 4s ease-in-out infinite;">
+        <defs>
+          <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#2a2a2a;stop-opacity:1"/>
+            <stop offset="100%" style="stop-color:#111111;stop-opacity:1"/>
+          </linearGradient>
+          <linearGradient id="text-grad-logo" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.6"/>
+            <stop offset="50%" style="stop-color:#ffffff;stop-opacity:1"/>
+            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.6"/>
+          </linearGradient>
+          <linearGradient id="line-grad-logo" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0"/>
+            <stop offset="50%" style="stop-color:#ffffff;stop-opacity:0.35"/>
+            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+          </linearGradient>
+          <linearGradient id="strip-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#1a1a1a"/>
+            <stop offset="100%" style="stop-color:#2d2d2d"/>
+          </linearGradient>
+          <filter id="card-shadow-logo">
+            <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,0.8)"/>
+          </filter>
+          <filter id="glow-logo">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <rect width="400" height="200" fill="transparent"/>
+
+        <!-- Carte grise -->
+        <g filter="url(#card-shadow-logo)">
+          <g transform="translate(200, 82) rotate(-2)">
+            <rect x="-118" y="-74" width="236" height="148" rx="8"
+                  fill="url(#card-grad)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <!-- Bande bleue EU -->
+            <rect x="-118" y="-74" width="28" height="148" rx="8" fill="#003189"/>
+            <rect x="-102" y="-74" width="14" height="148" fill="#003189"/>
+            <g fill="rgba(255,215,0,0.85)" font-size="6" text-anchor="middle">
+              <text x="-107" y="-52">★</text><text x="-107" y="-40">★</text>
+              <text x="-107" y="-28">★</text><text x="-107" y="-16">★</text>
+              <text x="-107" y="-4">★</text><text x="-107" y="8">★</text>
+              <text x="-107" y="20">★</text><text x="-107" y="32">★</text>
+              <text x="-107" y="44">★</text><text x="-107" y="56">★</text>
+            </g>
+            <text x="-107" y="68" font-family="Arial" font-size="10" font-weight="900"
+                  fill="rgba(255,255,255,0.9)" text-anchor="middle">F</text>
+            <!-- En-tête -->
+            <rect x="-88" y="-74" width="206" height="24" fill="rgba(255,255,255,0.05)"/>
+            <text x="-82" y="-58" font-family="Arial" font-size="6.5" font-weight="700"
+                  letter-spacing="1.5" fill="rgba(255,255,255,0.75)">CERTIFICAT D'IMMATRICULATION</text>
+            <!-- Immat principale -->
+            <rect x="-88" y="-50" width="206" height="30" fill="rgba(255,255,255,0.04)"/>
+            <text x="14" y="-29" font-family="'Arial Black', Arial" font-size="20" font-weight="900"
+                  letter-spacing="4" fill="white" text-anchor="middle" filter="url(#glow-logo)">AB · 123 · CD</text>
+            <!-- Ligne séparatrice -->
+            <line x1="-88" y1="-20" x2="118" y2="-20" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+            <!-- Champs -->
+            <text x="-85" y="-9" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">A</text>
+            <text x="-78" y="-9" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.65)">DUPONT JEAN</text>
+            <text x="-85" y="3" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">B</text>
+            <text x="-78" y="3" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.65)">15/03/2020</text>
+            <text x="-85" y="15" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">D.1</text>
+            <text x="-74" y="15" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.65)">RENAULT</text>
+            <text x="-85" y="27" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">D.3</text>
+            <text x="-74" y="27" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.65)">CLIO V</text>
+            <text x="-85" y="39" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">E</text>
+            <text x="-78" y="39" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.5)" letter-spacing="0.5">VF1RJA200K0000001</text>
+            <line x1="14" y1="-20" x2="14" y2="50" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+            <text x="18" y="-9" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">J.1</text>
+            <text x="27" y="-9" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.65)">DIESEL</text>
+            <text x="18" y="3" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">G</text>
+            <text x="27" y="3" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.65)">1450 kg</text>
+            <text x="18" y="15" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">P.1</text>
+            <text x="27" y="15" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.65)">85 kW</text>
+            <text x="18" y="27" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.35)" font-weight="700">P.6</text>
+            <text x="27" y="27" font-family="Arial" font-size="6" fill="rgba(255,255,255,0.65)">4 CV</text>
+            <!-- Bande holographique -->
+            <rect x="-88" y="48" width="206" height="8" fill="url(#strip-grad)" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+            <g opacity="0.15">
+              <line x1="-88" y1="52" x2="118" y2="52" stroke="white" stroke-width="0.3"/>
+              <line x1="-80" y1="48" x2="-76" y2="56" stroke="white" stroke-width="0.3"/>
+              <line x1="-60" y1="48" x2="-56" y2="56" stroke="white" stroke-width="0.3"/>
+              <line x1="-40" y1="48" x2="-36" y2="56" stroke="white" stroke-width="0.3"/>
+              <line x1="-20" y1="48" x2="-16" y2="56" stroke="white" stroke-width="0.3"/>
+              <line x1="0"   y1="48" x2="4"   y2="56" stroke="white" stroke-width="0.3"/>
+              <line x1="20"  y1="48" x2="24"  y2="56" stroke="white" stroke-width="0.3"/>
+              <line x1="40"  y1="48" x2="44"  y2="56" stroke="white" stroke-width="0.3"/>
+              <line x1="60"  y1="48" x2="64"  y2="56" stroke="white" stroke-width="0.3"/>
+              <line x1="100" y1="48" x2="104" y2="56" stroke="white" stroke-width="0.3"/>
+            </g>
+            <circle cx="100" cy="62" r="4" fill="#080808" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <circle cx="110" cy="62" r="4" fill="#080808" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+          </g>
+        </g>
+
+        <!-- Texte ESTHETICAR -->
+        <rect x="0" y="162" width="400" height="1" fill="url(#line-grad-logo)"/>
+        <text x="200" y="183" font-family="'Arial Black', Impact, sans-serif"
+              font-size="32" font-weight="900" letter-spacing="8"
+              fill="url(#text-grad-logo)" text-anchor="middle">ESTHETICAR</text>
+        <text x="200" y="197" font-family="Arial, sans-serif"
+              font-size="7.5" font-weight="400" letter-spacing="5"
+              fill="rgba(255,255,255,0.3)" text-anchor="middle">CARTE GRISE EN LIGNE</text>
       </svg>
-      <div class="brand-name">ESTHETICAR</div>
     </div>
 
     <div class="menu-list">
