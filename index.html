@@ -1042,7 +1042,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // ── Navigation Stack ──
-  let history = [];
+  let navHistory = [];
   let currentScreen = 'screen-home';
 
   function navigate(id) {
@@ -1051,7 +1051,7 @@
     prev.classList.remove('active');
     setTimeout(() => prev.classList.remove('exit'), 400);
 
-    history.push(currentScreen);
+    navHistory.push(currentScreen);
     currentScreen = id;
 
     const next = document.getElementById(id);
@@ -1060,14 +1060,14 @@
   }
 
   function goBack() {
-    if (!history.length) return;
+    if (!navHistory.length) return;
     const prev = document.getElementById(currentScreen);
     prev.style.transition = 'opacity 0.3s, transform 0.3s';
     prev.classList.remove('active');
     prev.style.transform = 'translateX(30px)';
     setTimeout(() => { prev.style.transform = ''; prev.style.transition = ''; }, 350);
 
-    currentScreen = history.pop();
+    currentScreen = navHistory.pop();
     const next = document.getElementById(currentScreen);
     next.classList.add('active');
     next.scrollTop = 0;
